@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Lead Response Demo (Sample)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0f172a;color:#e2e8f0}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;background:#111c33;border-bottom:1px solid #1e293b}
+h1{font-size:20px;margin:0}h1 small{display:block;font-size:12px;color:#94a3b8;font-weight:400}
+.tog,.ctl{display:flex;gap:6px}button{border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer;background:#1e293b;color:#e2e8f0}
+button.on,button.pri{background:#f97316;color:#fff}button:disabled{opacity:.4}
+main{display:grid;grid-template-columns:380px 1fr;gap:24px;padding:24px;max-width:1200px;margin:auto}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+.phone{width:340px;max-width:100%;margin:auto;background:#000;border-radius:40px;padding:14px;box-shadow:0 20px 50px #0008}
+.scr{background:#f8fafc;border-radius:28px;height:640px;display:flex;flex-direction:column;overflow:hidden;color:#0f172a}
+.top{background:#e2e8f0;padding:12px;text-align:center;font-size:13px}.top b{display:block;font-size:15px}
+#chat{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:80%;padding:9px 12px;border-radius:16px;font-size:14px;line-height:1.35;animation:pop .3s}
+.in{background:#e5e7eb;align-self:flex-start}.out{background:#2563eb;color:#fff;align-self:flex-end}
+.sys{align-self:center;font-size:12px;color:#64748b;background:#fee2e2;padding:4px 10px;border-radius:10px}
+.t{display:block;font-size:10px;opacity:.6;margin-top:3px}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.dash{background:#111c33;border:1px solid #1e293b;border-radius:16px;padding:20px}
+.dash h2{margin:0 0 14px;font-size:16px;color:#94a3b8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:#0f172a;border:1px solid #1e293b;border-radius:12px;padding:14px;opacity:.35;transition:.4s}
+.card.live{opacity:1;border-color:#f97316}.card h3{margin:0 0 8px;font-size:14px}
+.f{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed #1e293b}.f span:last-child{color:#fbbf24;text-align:right}
+.slot{display:inline-block;margin:3px;padding:5px 8px;border-radius:6px;background:#1e293b;font-size:12px}.slot.bk{background:#16a34a;color:#fff}
+.alert{background:#7c2d12;color:#fff;padding:10px;border-radius:8px;font-size:13px;display:none}.alert.show{display:block;animation:pop .4s}
+.q{font-size:13px;padding:5px 0}.q i{font-style:normal;color:#64748b}.q.done i{color:#22c55e}
+.stats{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:16px;border-top:1px solid #1e293b;background:#111c33}
+.st{background:#0f172a;padding:10px 16px;border-radius:10px;text-align:center;font-size:12px;color:#94a3b8}.st b{display:block;font-size:18px;color:#fff}
+.note{text-align:center;font-size:11px;color:#64748b;padding:0 0 16px;background:#111c33}
+</style></head><body>
+<header><h1 id="ttl">Valley Peak Roofing (sample)<small>AI lead response &amp; booking demo — fictional company and customer</small></h1>
+<div class="tog"><button id="bR" class="on" onclick="setS('roof')">Roofing</button><button id="bH" onclick="setS('hvac')">HVAC</button></div>
+<div class="ctl"><button class="pri" id="play" onclick="play()">▶ Play</button><button id="next" onclick="step()">Next step</button><button onclick="reset()">↺ Replay</button></div></header>
+<main><div class="phone"><div class="scr"><div class="top"><b id="who"></b>Business texting line — AI replies in blue (sample)</div><div id="chat"></div></div></div>
+<section class="dash"><h2>Contractor dashboard — live</h2><div class="alert" id="alert"></div><div class="grid" style="margin-top:12px">
+<div class="card" id="cLead"><h3>🆕 New lead</h3><div id="lead"></div></div>
+<div class="card" id="cQual"><h3>📋 Qualification</h3><div id="qual"></div></div>
+<div class="card" id="cCal"><h3>📅 Estimate calendar</h3><div id="cal"></div></div>
+<div class="card" id="cQ"><h3>⏭ Automations queued</h3><div id="queue"></div></div></div></section></main>
+<div class="stats"><div class="st"><b>30 sec</b>Response time</div><div class="st"><b>24/7</b>Lead coverage</div><div class="st"><b>0</b>Calls the owner returned manually</div><div class="st"><b>1</b>Estimate booked</div></div>
+<div class="note">Example numbers for this demo only — not real results or guarantees.</div>
+<script>
+const S={roof:{co:'Valley Peak Roofing (sample)',name:'Maria G. (sample)',src:'Missed call',
+slots:['Wed 9:00 AM','Wed 1:30 PM','Thu 10:00 AM'],pick:1,
+steps:[
+{sys:'📞 Missed call from (209) 555-0142 — 4:12 PM',lead:1,alert:'Missed call — auto text-back sending…'},
+{o:"Hi, this is Valley Peak Roofing! Sorry we missed your call — we're on a job. I can help right now by text. What's going on with your roof?",t:'4:12 PM (8 sec later)'},
+{i:"We had a leak in the living room ceiling after last night's storm. Water is dripping.",q:['Issue','Leak after storm']},
+{o:"I'm sorry to hear that. What's the address or ZIP code of the home?"},{i:'1234 Sample Ln, Stockton 95207',q:['Location','Stockton 95207']},
+{o:'About how old is the roof, if you know?'},{i:'Around 18 years I think',q:['Roof age','~18 yrs']},
+{o:'Thanks. Optional: send a photo of the ceiling or roof if you can.'},{i:'📷 [photo of ceiling stain]',q:['Photos','1 received']},
+{o:'Is water actively coming in (urgent), or can it wait a few days?'},{i:"It's slow now, but I want it looked at ASAP",q:['Urgency','High']},
+{o:'Got it. Our estimator can come out:\n1) Wed 9:00 AM\n2) Wed 1:30 PM\n3) Thu 10:00 AM\nReply 1, 2 or 3.',slots:1},
+{i:'2',book:1,alert:'✅ New booked estimate: Maria G. — Wed 1:30 PM, Stockton 95207 (leak, high urgency)'},
+{o:"You're booked for Wed 1:30 PM at 1234 Sample Ln. Our estimator will text when on the way. Reply R to reschedule.",queue:['Reminder text — day before','done']},
+{sys:'— Tuesday, 6:00 PM —'},{o:'Reminder: Valley Peak Roofing estimate tomorrow (Wed) at 1:30 PM. Reply C to confirm.'},
+{i:'C',queue:['Quote follow-up — 2, 5, 9 days after estimate','q']},{o:"Confirmed — see you tomorrow!",queue:['Google review request — after job closes','q'],end:1}]},
+hvac:{co:'Delta Air Comfort HVAC (sample)',name:'James T. (sample)',src:'Website form',slots:['Today 3:00 PM','Today 5:30 PM','Tomorrow 8:00 AM'],pick:0,
+steps:[
+{sys:'🌐 Web form: "AC not working" — 1:47 PM',lead:1,alert:'New web lead — AI replying…'},
+{o:"Hi James, this is Delta Air Comfort! Got your request. Sorry about the AC — what's it doing?",t:'1:47 PM (12 sec later)'},
+{i:"It's blowing warm air and it's 106 out. House is at 88.",q:['Issue','AC blowing warm']},
+{o:"That's rough in this heat. What's the address or ZIP?"},{i:'55 Example Ct, Lodi 95240',q:['Location','Lodi 95240']},
+{o:'About how old is the system?'},{i:'Maybe 12 years',q:['System age','~12 yrs']},
+{o:'Optional: a photo of the outdoor unit or thermostat helps our tech.'},{i:'📷 [photo of outdoor unit]',q:['Photos','1 received']},
+{o:'Anyone at home who is elderly, very young, or has health concerns in the heat?'},{i:'Yes my mom lives with us',q:['Urgency','Urgent — heat risk']},
+{o:"We'll prioritize you. Available:\n1) Today 3:00 PM\n2) Today 5:30 PM\n3) Tomorrow 8:00 AM\nReply 1, 2 or 3.",slots:1},
+{i:'1',book:1,alert:'✅ New booked service call: James T. — Today 3:00 PM, Lodi 95240 (no cooling, urgent)'},
+{o:"Booked for today at 3:00 PM. Your tech will text when on the way. Stay cool — close blinds and run fans meanwhile.",queue:['On-the-way text — 30 min before','done']},
+{sys:'— 2:30 PM —'},{o:'Your Delta Air Comfort tech is on the way, arriving about 3:00 PM.'},
+{i:'Thank you!',queue:['Repair/replace quote follow-up — 2, 5, 9 days','q']},{o:'Happy to help!',queue:['Google review request + maintenance plan offer','q'],end:1}]}};
+let sc='roof',i=0,timer=null;const $=id=>document.getElementById(id);
+function reset(){clearTimeout(timer);timer=null;i=0;const s=S[sc];$('ttl').firstChild.textContent=s.co;$('who').textContent=s.co.replace(' (sample)','');
+$('chat').innerHTML='';['cLead','cQual','cCal','cQ'].forEach(c=>$(c).classList.remove('live'));
+$('lead').innerHTML='<div class="f"><span>Status</span><span>Waiting…</span></div>';$('qual').innerHTML='';$('queue').innerHTML='';
+$('cal').innerHTML=s.slots.map((x,k)=>`<span class="slot" id="sl${k}">${x}</span>`).join('');$('alert').className='alert';$('next').disabled=false;$('play').disabled=false}
+function msg(c,t,ts){const d=document.createElement('div');d.className='m '+c;d.innerText=t;if(ts){const e=document.createElement('span');e.className='t';e.textContent=ts;d.appendChild(e)}$('chat').appendChild(d);$('chat').scrollTop=1e6}
+function step(){const s=S[sc],x=s.steps[i];if(!x)return;i++;
+if(x.sys){const d=document.createElement('div');d.className='sys';d.textContent=x.sys;$('chat').appendChild(d)}
+if(x.o)msg('out',x.o,x.t);if(x.i)msg('in',x.i);
+if(x.lead){$('cLead').classList.add('live');$('lead').innerHTML=`<div class="f"><span>Name</span><span>${s.name}</span></div><div class="f"><span>Source</span><span>${s.src}</span></div><div class="f"><span>Status</span><span id="stt">AI responding</span></div>`}
+if(x.q){$('cQual').classList.add('live');$('qual').innerHTML+=`<div class="f"><span>${x.q[0]}</span><span>${x.q[1]}</span></div>`}
+if(x.slots){$('cCal').classList.add('live');s.slots.forEach((_,k)=>$('sl'+k).style.outline='1px solid #f97316')}
+if(x.book){$('sl'+s.pick).className='slot bk';$('sl'+s.pick).textContent+=' ✔ '+s.name;$('stt').textContent='Booked'}
+if(x.alert){$('alert').textContent=x.alert;$('alert').className='alert show'}
+if(x.queue){$('cQ').classList.add('live');$('queue').innerHTML+=`<div class="q ${x.queue[1]=='done'?'done':''}"><i>${x.queue[1]=='done'?'✔ sent':'⏳ queued'}</i> ${x.queue[0]}</div>`}
+if(x.end){$('next').disabled=true;$('play').disabled=true;timer=null}}
+function play(){if(timer)return;(function go(){step();if(i<S[sc].steps.length)timer=setTimeout(go,1100);else timer=null})()}
+function setS(n){sc=n;$('bR').className=n=='roof'?'on':'';$('bH').className=n=='hvac'?'on':'';reset()}
+reset();
+</script></body></html>
